@@ -1,0 +1,78 @@
+---
+title: "MLS Listings"
+author: "Sorenson Impact Center Data Science Team"
+output:
+  word_document:
+    reference_docx: ~/Github/SI_Project_Template/template_files/report_template/mystyles.docx
+    fig_width: 6
+    fig_height: 4
+---
+
+```{r setup, include=FALSE}
+# Load packages 
+library(knitr)
+library(readxl)
+library(scales)
+library(forcats)
+library(lubridate)
+library(stringr)
+library(tidyverse)
+library(htmltab)
+require(rvest)
+require(RCurl)
+
+# Echo=FALSE means the code does not show up in the document
+# Caching allows you to re-run the report quickly
+knitr::opts_chunk$set(echo=FALSE)
+knitr::opts_chunk$set(cache=TRUE)
+knitr::opts_chunk$set(message = T) #Use F to suppress all messages from chunks for finalized report
+knitr::opts_chunk$set(warning = T) #Use F to suppress all warnings from chunks for finalized report
+
+
+# Setting the default resolution of plots
+knitr::opts_chunk$set(dpi = 300)
+
+# You can't just set the working directory when using .rmd in Knitr, so we set the root directory
+# This is to make it easy to load data from the google drive
+# All figures and cache are still saving in the same directory as the .rmd (don't commit these)
+knitr::opts_knit$set(root.dir = "~/Google Drive/SI/DataScience/") #git2r::workdir() will show git repository dir.
+setwd("~/Google Drive/SI/DataScience/")
+
+# Sorenson Impact design: a list of colors we use in ggplot
+SI_design <- list(pacific = "#1D4F53", atlantic = "#18303C", carbon = "#6d6f71", granite = "#bcbdbf", silver = "#e6e7e7", arctic = "#107D7F")
+SI_colorplot <- function() {data.frame("color" = names(unlist(SI_design)), "code" = unlist(SI_design), stringsAsFactors = F) %>% ggplot() + geom_rect(aes(fill = I(code)), xmin = 0, xmax = 1, ymin = 0, ymax = 1) + facet_wrap(~color)} #shows you our color options!
+
+# This will fill bar colors with Sorenson Impact colors and default to theme_minimal
+update_geom_defaults("bar", list(fill = SI_design$color_1))
+update_geom_defaults("smooth", list(colour = SI_design$color_1, fill = SI_design$color_light, alpha = I(2/10)))
+update_geom_defaults("point", list(colour = SI_design$color_1, fill = SI_design$color_1))
+theme_set(theme_minimal())
+```
+
+```{r}
+mls <- 1449570 #starting value for MLS number
+
+repeat {
+  message(paste("Checking MLS#", mls))
+  
+  url <- str_c("https://www.utahrealestate.com/", mls)
+
+  #address <- 
+  allhtml <- url %>% read_html()
+    url %>% read_html() %>% html_nodes(xpath = "//p") %>% html_text()
+  
+  if(address == "Property Not Found") {
+    message("... Property Not Found, stopping.")
+    break
+  }
+  
+  
+  
+  mls <- mls + 1
+}
+
+
+
+
+```
+
